@@ -1874,13 +1874,13 @@ def action_sync(emerge_config, trees=DeprecationWarning,
 	else:
 		selected_repos.extend(emerge_config.target_config.settings.repositories)
 
+	sync_manager = SyncManager(emerge_config.target_config.settings, emergelog)
+	retvals = []
 	for repo in selected_repos:
 		if repo.sync_type is not None:
-			sync_manager = SyncManager(emerge_config.target_config.settings,
-				emergelog)
 			returncode = sync_manager.sync(emerge_config, repo)
 			if returncode != os.EX_OK:
-				return returncode
+				retvals.append(returncode)
 
 	# Reload the whole config from scratch.
 	portage._sync_mode = False
@@ -1915,6 +1915,8 @@ def action_sync(emerge_config, trees=DeprecationWarning,
 		print()
 
 	display_news_notification(emerge_config.target_config, emerge_config.opts)
+	if retvals:
+		return retvals[0]
 	return os.EX_OK
 
 
