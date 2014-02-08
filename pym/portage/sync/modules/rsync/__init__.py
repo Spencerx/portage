@@ -1,7 +1,8 @@
-# Copyright 2005-2012 Gentoo Foundation
+# Copyright 2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-"""Scan and generate metadata indexes for binary packages.
+"""Rsync plug-in module for portage.
+   Performs rsync transfers on repositories
 """
 
 
@@ -14,7 +15,7 @@ module_spec = {
 			'class': "RsyncSync",
 			'description': __doc__,
 			'functions': ['sync',],
-			'func_desc': {'sync', 'Performs a rsync transfer on the repo'}
+			'func_desc': {'sync': 'Performs rsync transfers on the repository'}
 			}
 		}
 	}
