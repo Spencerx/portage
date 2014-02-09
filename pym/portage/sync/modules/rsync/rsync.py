@@ -42,6 +42,7 @@ class RsyncSync(object):
 		self.logger = None
 		self.repo = None
 		self.options = None
+		self.xterm_titles = None
 
 
 	def _kwargs(self, kwargs):
