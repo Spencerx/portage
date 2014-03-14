@@ -1,4 +1,12 @@
+'''
+Base class for performing sync operations.
+This class contains common initialization code and functions.
+'''
 
+import os
+
+import portage
+from portage.util import writemsg_level
 
 
 class SyncBase(object):
@@ -21,6 +29,7 @@ class SyncBase(object):
 		self.logger = None
 		self.repo = None
 		self.xterm_titles = None
+		self.spawn_kwargs = None
 		self.bin_command = portage.process.find_binary(bin_command)
 
 		self.has_bin = True
@@ -29,7 +38,7 @@ class SyncBase(object):
 			"Type \"emerge %s\" to enable %s support." % (bin_pkg, bin_command)]
 			for l in msg:
 				writemsg_level("!!! %s\n" % l,
-					level=logging.ERROR, noiselevel=-1)
+					level=self.logger.ERROR, noiselevel=-1)
 			self.has_bin = False
 
 
@@ -40,6 +49,7 @@ class SyncBase(object):
 		self.logger = self.options.get('logger', None)
 		self.repo = self.options.get('repo', None)
 		self.xterm_titles = self.options.get('xterm_titles', False)
+		self.spawn_kwargs = self.options.get('spawn_kwargs', None)
 
 
 	def exists(self, **kwargs):
@@ -48,7 +58,7 @@ class SyncBase(object):
 			self._kwargs(kwargs)
 		elif not self.repo:
 			return False
-		spawn_kwargs = self.options.get('spawn_kwargs', None)
+
 
 		if not os.path.exists(self.repo.location):
 			return False
