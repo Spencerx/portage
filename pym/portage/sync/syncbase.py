@@ -6,9 +6,9 @@ class SyncBase(object):
 
 	short_desc = "Perform sync operations on repositories"
 
+	@staticmethod
 	def name():
 		return "BlankSync"
-	name = staticmethod(name)
 
 
 	def can_progressbar(self, func):

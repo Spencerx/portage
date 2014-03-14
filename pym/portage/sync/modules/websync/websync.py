@@ -8,9 +8,9 @@ class WebRsync(SyncBase):
 
 	short_desc = "Perform sync operations on webrsync based repositories"
 
+	@staticmethod
 	def name():
 		return "WebRSync"
-	name = staticmethod(name)
 
 
 	def __init__(self):

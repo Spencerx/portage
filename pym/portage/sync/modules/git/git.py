@@ -18,9 +18,9 @@ class GitSync(object):
 
 	short_desc = "Perform sync operations on git based repositories"
 
+	@staticmethod
 	def name():
 		return "GitSync"
-	name = staticmethod(name)
 
 
 	def can_progressbar(self, func):

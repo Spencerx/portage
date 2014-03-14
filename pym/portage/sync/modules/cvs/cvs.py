@@ -15,9 +15,9 @@ class CVSSync(object):
 
 	short_desc = "Perform sync operations on CVS repositories"
 
+	@staticmethod
 	def name():
 		return "CVSSync"
-	name = staticmethod(name)
 
 
 	def can_progressbar(self, func):

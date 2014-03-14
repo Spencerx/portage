@@ -28,9 +28,9 @@ class RsyncSync(object):
 
 	short_desc = "Perform sync operations on rsync based repositories"
 
+	@staticmethod
 	def name():
 		return "RsyncSync"
-	name = staticmethod(name)
 
 
 	def can_progressbar(self, func):
