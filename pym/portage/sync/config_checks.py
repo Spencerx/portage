@@ -11,8 +11,11 @@ subclass it adding and/or overriding classes as needed.
 
 import logging
 
+from portage.localization import _
+from portage.util import writemsg_level
 
-def check_type(repo, logger):
+
+def check_type(repo, logger, module_names):
 	if repo.sync_uri is not None and repo.sync_type is None:
 		writemsg_level("!!! %s\n" %
 			_("Repository '%s' has sync-uri attribute, but is missing sync-type attribute")
@@ -30,24 +33,14 @@ def check_type(repo, logger):
 class CheckSyncConfig(object):
 	'''Base repos.conf settings checks class'''
 
-	def __init__(self, logger=None):
+	def __init__(self, repo=None, logger=None):
 		'''Class init function
 
 		@param logger: optional logging instance,
 			defaults to logging module
 		'''
 		self.logger = logger or logging
-
-
-	def __call__(self, repo, logger=None):
-		'''Class call method
-
-		@param repo: RepoConfig instance
-		@param logger: optional logging instance'''
-		if logger:
-			self.logger = logger
 		self.repo = repo
-		self.repo_checks()
 		self.checks = ['check_uri', 'check_auto_sync']
 
 
@@ -68,8 +61,8 @@ class CheckSyncConfig(object):
 		'''Check the auto_sync setting'''
 		if self.repo.auto_sync is None:
 			writemsg_level("!!! %s\n" % _("Repository '%s' is missing auto_sync attribute")
-				% repo.name, level=self.logger.ERROR, noiselevel=-1)
-		if self.repo.auto_sync.lower() not in ["yes", "true", "no", "false"]:
+				% self.repo.name, level=self.logger.ERROR, noiselevel=-1)
+		elif self.repo.auto_sync.lower() not in ["yes", "true", "no", "false"]:
 			writemsg_level("!!! %s\n" % _("Repository '%s' auto_sync attribute must be one of: %s")
-				% (self.repo.name, '{yes, true, no, false}',
+				% (self.repo.name, '{yes, true, no, false}'),
 				level=self.logger.ERROR, noiselevel=-1)
