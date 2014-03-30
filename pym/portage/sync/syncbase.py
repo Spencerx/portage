@@ -97,9 +97,3 @@ class SyncBase(object):
 		# and portdb properly account for its existence.
 		'''
 		pass
-
-
-	def verify_config(self):
-		'''Verify the config parameters for teh repository
-		'''
-		pass
