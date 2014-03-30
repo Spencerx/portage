@@ -556,6 +556,9 @@ class RepoConfigLoader(object):
 
 			repo = RepoConfig(sname, optdict, local_config=local_config)
 
+			# Perform repos.conf sync variable validation
+			portage.sync.validate_config(repo)
+
 			# For backward compatibility with locations set via PORTDIR and
 			# PORTDIR_OVERLAY, delay validation of the location and repo.name
 			# until after PORTDIR and PORTDIR_OVERLAY have been processed.
