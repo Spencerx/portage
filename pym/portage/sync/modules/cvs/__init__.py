@@ -46,7 +46,7 @@ class CheckCVSConfig(CheckSyncConfig):
 
 
 	def check_cvs_repo(self):
-		if self.repo.sync_type == "cvs" and self.repo.sync_cvs_repo is None:
+		if self.repo.sync_cvs_repo is None:
 			writemsg_level("!!! %s\n" %
 				_("Repository '%s' has sync-type=cvs, but is missing sync-cvs-repo attribute")
 				% self.repo.name, level=self.logger.ERROR, noiselevel=-1)
