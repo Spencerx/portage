@@ -1,3 +1,6 @@
+# Copyright 2014 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
 '''
 Base class for performing sync operations.
 This class contains common initialization code and functions.
