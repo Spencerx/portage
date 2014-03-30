@@ -6,6 +6,9 @@ Performs a cvs up on repositories
 """
 
 
+from portage.sync.config_checks import CheckSyncConfig
+
+
 module_spec = {
 	'name': 'cvs',
 	'description': __doc__,
@@ -29,6 +32,22 @@ module_spec = {
 						'"https://wiki.gentoo.org:Project:Portage" for details',
 				},
 			},
+			'validate_config': CheckCVSConfig,
 		}
 	}
 }
+
+
+class CheckCVSConfig(CheckSyncConfig):
+
+	def __init__(self, logger):
+		CheckSyncConfig.__init__(self, logger)
+		self.checks.append('check_cvs_repo')
+
+
+	def check_cvs_repo(self):
+		if self.repo.sync_type == "cvs" and self.repo.sync_cvs_repo is None:
+			writemsg_level("!!! %s\n" %
+				_("Repository '%s' has sync-type=cvs, but is missing sync-cvs-repo attribute")
+				% self.repo.name, level=self.logger.ERROR, noiselevel=-1)
+
