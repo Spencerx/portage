@@ -43,10 +43,11 @@ def get_syncer(settings=None, logger=None):
 
 def validate_config(repo, logger):
 	'''Validate the repos.conf settings for the repo'''
-	if not check_type(repo, logger):
+	if not check_type(repo, logger, module_names):
 		return False
 
-	if repo.sync_tpye:
+	#print(repo)
+	if repo.sync_type:
 		validated = module_controller.modules[repo.sync_type]['validate_config']
-		return validated(repo, logger)
+		return validated(repo, logger).repo_checks()
 	return True
