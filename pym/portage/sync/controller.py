@@ -58,7 +58,6 @@ class TaskHandler(object):
 				'options': options.copy()
 				}
 			result = getattr(inst, func)(**kwargs)
-			print("TaskHandler, result =", result)
 			if show_progress:
 				# make sure the final progress is displayed
 				self.progress_bar.display()
@@ -135,7 +134,7 @@ class SyncManager(object):
 
 
 	def do_callback(self, result):
-		print("result:", result, "callback()", self.callback)
+		#print("result:", result, "callback()", self.callback)
 		exitcode, updatecache_flg = result
 		if self.callback:
 			self.callback(exitcode, updatecache_flg)
