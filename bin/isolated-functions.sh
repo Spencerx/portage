@@ -180,21 +180,24 @@ die() {
 	# This tends to be the most common usage though, so let's do it.
 	# Due to the usage of appending to the hold space (even when empty),
 	# we always end up with the first line being a blank (thus the 2nd sed).
-	sed -n \
-		-e "# When we get to the line that failed, append it to the
-		    # hold space, move the hold space to the pattern space,
-		    # then print out the pattern space and quit immediately
-		    ${BASH_LINENO[0]}{H;g;p;q}" \
-		-e '# If this line ends with a line continuation, append it
-		    # to the hold space
-		    /\\$/H' \
-		-e '# If this line does not end with a line continuation,
-		    # erase the line and set the hold buffer to it (thus
-		    # erasing the hold buffer in the process)
-		    /[^\]$/{s:^.*$::;h}' \
-		"${BASH_SOURCE[1]}" \
-		| sed -e '1d' -e 's:^:RETAIN-LEADING-SPACE:' \
-		| while read -r n ; do eerror "  ${n#RETAIN-LEADING-SPACE}" ; done
+	local -a sed_args=(
+		# When we get to the line that failed, append it to the hold
+		# space, move the hold space to the pattern space, then print
+		# out the pattern space and quit immediately.
+		-n -e "${BASH_LINENO[0]}{H;g;p;q}"
+		# If this line ends with a line continuation, append it to the
+		# hold space.
+		-e '/\\$/H'
+		# If this line does not end with a line continuation, erase the
+		# line and set the hold buffer to it (thus erasing the hold
+		# buffer in the process).
+		-e '/[^\]$/{s:^.*$::;h}'
+	)
+	sed "${sed_args[@]}" "${BASH_SOURCE[1]}" \
+	| sed -e '1d' -e 's:^:RETAIN-LEADING-SPACE:' \
+	| while read -r n; do
+		eerror "  ${n#RETAIN-LEADING-SPACE}"
+	done
 	eerror
 	fi
 	eerror "If you need support, post the output of \`emerge --info '=${CATEGORY}/${PF}::${PORTAGE_REPO_NAME}'\`,"
@@ -491,19 +494,19 @@ if [[ -z ${XARGS} ]] ; then
 fi
 
 ___makeopts_jobs() {
-	# Copied from multiprocessing.eclass:makeopts_jobs
-	# This assumes the first .* will be more greedy than the second .*
-	# since POSIX doesn't specify a non-greedy match (i.e. ".*?").
-	local jobs=$(echo " ${MAKEOPTS} " | sed -r -n \
-		-e 's:.*[[:space:]](-[a-z]*j|--jobs[=[:space:]])[[:space:]]*([0-9]+).*:\2:p' || die)
+	local LC_ALL LC_COLLATE=C ere jobs
 
-	# Fallbacks for if MAKEOPTS parsing failed
-	[[ -n ${jobs} ]] || \
-		jobs=$(getconf _NPROCESSORS_ONLN 2>/dev/null) || \
-		jobs=$(sysctl -n hw.ncpu 2>/dev/null) || \
+	ere='.*[[:space:]](-[A-Ia-iK-Zk-z]*j[[:space:]]*|--jobs(=|[[:space:]]+))([0-9]+)[[:space:]]'
+
+	if [[ " ${MAKEOPTS} " =~ $ere ]]; then
+		jobs=$(( 10#${BASH_REMATCH[3]} ))
+	elif jobs=$({ getconf _NPROCESSORS_ONLN || sysctl -n hw.ncpu; } 2>/dev/null); then
+		:
+	else
 		jobs=1
+	fi
 
-	echo ${jobs}
+	printf '%s\n' "${jobs}"
 }
 
 # Run ${XARGS} in parallel for detected number of CPUs, if supported.
