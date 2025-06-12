@@ -5,8 +5,8 @@
 # TODO: add -Wformat-security
 
 gcc_warn_check() {
-        local i reset_xtrace
-        local -a patterns
+	local i reset_xtrace
+	local -a patterns
 
 	# Evaluate misc gcc warnings
 	# In debug mode, this variable definition and corresponding grep calls
@@ -170,7 +170,7 @@ gcc_warn_check() {
 		fi \
 		| sed -E -e $'s/\033\[[0-9;]*[A-Za-z]//g' \
 		| grep -E -a "warning: (${patterns[*]})" \
-		| uniq
+		| awk '!seen[$0]++'
 	)
 
 	if (( i > 0 )); then
