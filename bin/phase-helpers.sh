@@ -681,7 +681,7 @@ einstall() {
 		libdir="${!libdir_var}"
 	fi
 
-	if [[ -n "${libdir}" && "${CONF_PREFIX:+set}" = set ]]; then
+	if [[ "${libdir}" && -v CONF_PREFIX ]]; then
 		local destlibdir="${D%/}/${CONF_PREFIX}/${libdir}"
 		destlibdir="$(__strip_duplicate_slashes "${destlibdir}")"
 		LOCAL_EXTRA_EINSTALL="libdir=${destlibdir} ${LOCAL_EXTRA_EINSTALL}"
@@ -788,6 +788,10 @@ __eapi4_src_install() {
 		emake DESTDIR="${D}" install
 	fi
 
+	# To use declare -p determines whether a variable was declared but not
+	# whether it was set. Unfortunately, the language of EAPI 4 requires
+	# that it be this way.
+	# https://projects.gentoo.org/pms/4/pms.html#x1-10400010.1.9
 	if ! declare -p DOCS &>/dev/null ; then
 		local d
 		for d in README* ChangeLog AUTHORS NEWS TODO CHANGES \
@@ -1118,16 +1122,13 @@ fi
 
 if ___eapi_has_in_iuse; then
 	in_iuse() {
-		local use=${1}
-
-		if [[ -z "${use}" ]]; then
-			echo "!!! in_iuse() called without a parameter." >&2
-			echo "!!! in_iuse <USEFLAG>" >&2
+		if [[ ! $1 ]]; then
+			printf >&2 '!!! %s\n' \
+				"in_iuse() called without a parameter." \
+				"in_iuse <USEFLAG>"
 			die "in_iuse() called without a parameter"
 		fi
 
-		local liuse=( ${IUSE_EFFECTIVE} )
-
-		has "${use}" "${liuse[@]#[+-]}"
+		contains_word "$1" "${IUSE_EFFECTIVE}"
 	}
 fi
