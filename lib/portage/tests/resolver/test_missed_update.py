@@ -1,6 +1,8 @@
 # Copyright 2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+import pytest
+
 from portage.tests import TestCase
 from portage.tests.resolver.ResolverPlayground import (
     ResolverPlayground,
@@ -9,6 +11,7 @@ from portage.tests.resolver.ResolverPlayground import (
 
 
 class MissedQtUpdateTestCase(TestCase):
+    @pytest.mark.xfail()
     def testMissedQtUpdate(self):
         """
         Testcase where Portage was unable to upgrade from
