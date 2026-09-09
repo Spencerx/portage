@@ -398,7 +398,9 @@ This feature is enabled by default.
 Binary packages are requested to be signed by a trusted GnuPG signature.
 Portage will reject to process any binary package without a valid GnuPG
 signature. The verify command is defined in \fBBINPKG_GPG_VERIFY_COMMAND\fR
-variable.  If enabled, takes precedence over \fBbinrepos.conf\fR.
+variable.  If enabled, takes precedence over \fBbinrepos.conf\fR.  Remote
+binary packages have the equivalent of this option (\fIverify-signature\fR)
+enabled by default in \fBbinrepos.conf\fR, see \fBportage\fR(5).
 .TP
 .B binpkg-signing
 Binary packages will be signed by given GnuPG command. The signing command
