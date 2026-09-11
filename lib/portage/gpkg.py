@@ -812,6 +812,9 @@ class gpkg:
 
         # If `verify-signature` is unset in binrepos.conf, use the FEATURES
         # flags instead.
+        #
+        # Note that cnf/binrepos.conf shipped with Portage sets it to
+        # true in [DEFAULT].
         if verify_signature is None:
             # request_signature is whether signature files are mandatory.
             # If true, any missing signature file will cause processing to be

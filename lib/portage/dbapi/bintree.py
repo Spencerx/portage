@@ -420,9 +420,9 @@ class bindbapi(fakedbapi):
                 gpkg_args = {}
                 repoconfig = self.bintree.get_local_repo(cpv)
                 if repoconfig:
-                    # This may be missing if it's not a remote binpkg, or
+                    # repoconfig may be missing if it's not a remote binpkg, or
                     # remote binpkgs are mingled in with local binpkgs
-                    # (no separate `location` in binrepos.conf)
+                    # (no separate `location` in binrepos.conf).
                     gpkg_args["verify_signature"] = repoconfig.verify_signature
 
                 await loop.run_in_executor(
