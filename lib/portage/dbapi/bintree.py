@@ -1368,15 +1368,15 @@ class binarytree:
         self._remote_has_index = False
         self._remotepkgs = {}
 
-        need_trust_helper = "binpkg-request-signature" in self.settings.features or any(
+        binpkg_request_signature = "binpkg-request-signature" in self.settings.features
+        need_trust_helper = binpkg_request_signature or any(
             repo.verify_signature for repo in self._binrepos_conf.values()
         )
-        if need_trust_helper:
-            if not pretend and self.dbapi.writable and portage.data.secpass >= 2:
-                self._run_trust_helper()
-            gpkg_only = True
-        else:
-            gpkg_only = False
+
+        if need_trust_helper and (
+            not pretend and self.dbapi.writable and portage.data.secpass >= 2
+        ):
+            self._run_trust_helper()
 
         atoms = " ".join(str(a) for a in (getbinpkg_exclude or [])).split()
         getbinpkg_exclude = WildcardPackageSet(atoms)
@@ -1385,6 +1385,10 @@ class binarytree:
 
         # Order by descending priority.
         for repo in reversed(list(self._binrepos_conf.values())):
+            # If this specific binrepo has verify-signature disabled, we
+            # don't need to enforce that it uses gpkg.
+            gpkg_only = binpkg_request_signature or repo.verify_signature
+
             excluded = repo.getbinpkg_exclude or []
             getbinpkg_exclude_repo = WildcardPackageSet(excluded)
             included = repo.getbinpkg_include or []
