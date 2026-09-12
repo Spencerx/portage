@@ -988,6 +988,8 @@ class binarytree:
         # missing digests.
         minimum_keys = self._pkgindex_keys.difference(self._pkgindex_hashes)
 
+        # We only need to check the FEATURES flag here, as they're all
+        # local binpkgs. binrepos.conf isn't relevant as it's for remote.
         if "binpkg-request-signature" in self.settings.features:
             gpkg_only = True
         else:
