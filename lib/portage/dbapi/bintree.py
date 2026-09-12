@@ -479,7 +479,12 @@ class bindbapi(fakedbapi):
             except ValueError:
                 raise portage.exception.InvalidSignature(f"SIZE: {metadata['SIZE']}")
             else:
-                filesdict[os.path.basename(self.bintree.getname(pkg))] = size
+                binpkg_format = get_binpkg_format(metadata["PATH"], remote=True)
+                filesdict[
+                    os.path.basename(
+                        self.bintree.getname(pkg, remote_binpkg_format=binpkg_format)
+                    )
+                ] = size
 
         return filesdict
 
@@ -2510,7 +2515,7 @@ class binarytree:
                         )
 
         if filename is None:
-            binpkg_format = self.settings.get(
+            binpkg_format = remote_binpkg_format or self.settings.get(
                 "BINPKG_FORMAT", SUPPORTED_GENTOO_BINPKG_FORMATS[0]
             )
 
